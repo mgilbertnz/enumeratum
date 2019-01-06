@@ -16,7 +16,7 @@ lazy val scalacheckVersion = "1.14.0"
 
 // Library versions
 lazy val reactiveMongoVersion = "0.13.0"
-lazy val uPickleVersion       = "0.4.4"
+lazy val uPickleVersion       = "0.7.1"
 lazy val argonautVersion      = "6.2.1"
 lazy val json4sVersion        = "3.6.1"
 lazy val quillVersion         = "2.3.3"

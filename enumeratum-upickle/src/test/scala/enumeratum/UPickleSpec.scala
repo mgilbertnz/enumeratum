@@ -1,7 +1,8 @@
 package enumeratum
 
 import org.scalatest._
-import upickle.Js
+import upickle.default
+import upickle.default.{read, writeJs}
 
 /**
   * Created by Lloyd on 12/12/15.
@@ -12,18 +13,18 @@ class UPickleSpec extends FunSpec with Matchers {
 
   describe("Reader") {
 
-    val reader = UPickler.reader(Dummy)
+    val reader: default.Reader[Dummy] = UPickler.reader(Dummy)
 
     it("should work with valid values") {
-      reader.read(Js.Str("A")) shouldBe A
+      read(ujson.Str("A"))(reader) shouldBe A
     }
 
     it("should fail with invalid values") {
       intercept[Exception] {
-        reader.read(Js.Str("D"))
+        read(ujson.Str("D"))(reader)
       }
       intercept[Exception] {
-        reader.read(Js.Num(2))
+        read(ujson.Num(2))(reader)
       }
     }
 
@@ -33,13 +34,13 @@ class UPickleSpec extends FunSpec with Matchers {
     val reader = UPickler.reader(Dummy, true)
 
     it("should work with strings, disgregarding case") {
-      reader.read(Js.Str("A")) shouldBe A
-      reader.read(Js.Str("a")) shouldBe A
+      read(ujson.Str("A"))(reader) shouldBe A
+      read(ujson.Str("a"))(reader) shouldBe A
     }
 
     it("should work with invalid values") {
-      intercept[Exception](reader.read(Js.Str("D")))
-      intercept[Exception](reader.read(Js.Num(5)))
+      intercept[Exception](read(ujson.Str("D"))(reader))
+      intercept[Exception](read(ujson.Num(5))(reader))
     }
 
   }
@@ -48,12 +49,12 @@ class UPickleSpec extends FunSpec with Matchers {
     val reader = UPickler.readerLowercaseLower(Dummy)
 
     it("should work with strings, lower case") {
-      reader.read(Js.Str("a")) shouldBe A
+      read(ujson.Str("a"))(reader) shouldBe A
     }
 
     it("should work with invalid values") {
-      intercept[Exception](reader.read(Js.Str("D")))
-      intercept[Exception](reader.read(Js.Num(5)))
+      intercept[Exception](read(ujson.Str("D"))(reader))
+      intercept[Exception](read(ujson.Num(5))(reader))
     }
 
   }
@@ -62,12 +63,12 @@ class UPickleSpec extends FunSpec with Matchers {
     val reader = UPickler.readerUppercaseOnly(Dummy)
 
     it("should work with strings, upper case") {
-      reader.read(Js.Str("A")) shouldBe A
+      read(ujson.Str("A"))(reader) shouldBe A
     }
 
     it("should work with invalid values") {
-      intercept[Exception](reader.read(Js.Str("D")))
-      intercept[Exception](reader.read(Js.Num(5)))
+      intercept[Exception](read(ujson.Str("D"))(reader))
+      intercept[Exception](read(ujson.Num(5))(reader))
     }
 
   }
@@ -77,7 +78,7 @@ class UPickleSpec extends FunSpec with Matchers {
     val writer = UPickler.writer(Dummy)
 
     it("should write enum values to JsString") {
-      writer.write(A) shouldBe Js.Str("A")
+      writeJs[Dummy](A)(writer) shouldBe ujson.Str("A")
     }
 
   }
@@ -87,7 +88,7 @@ class UPickleSpec extends FunSpec with Matchers {
     val writer = UPickler.writerLowercaseOnly(Dummy)
 
     it("should write enum values to JsString") {
-      writer.write(A) shouldBe Js.Str("a")
+      writeJs[Dummy](A)(writer) shouldBe ujson.Str("a")
     }
 
   }
@@ -97,7 +98,7 @@ class UPickleSpec extends FunSpec with Matchers {
     val writer = UPickler.writerUppercaseOnly(Dummy)
 
     it("should write enum values to JsString") {
-      writer.write(A) shouldBe Js.Str("A")
+      writeJs[Dummy](A)(writer) shouldBe ujson.Str("A")
     }
 
   }

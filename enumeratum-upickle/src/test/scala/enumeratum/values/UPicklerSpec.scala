@@ -1,8 +1,7 @@
 package enumeratum.values
 
 import org.scalatest._
-import upickle.Js
-import upickle.default.{readJs, writeJs, Reader, Writer}
+import upickle.default.{Reader, Writer, read, writeJs}
 
 /**
   * Created by Lloyd on 4/14/16.
@@ -33,16 +32,16 @@ class UPicklerSpec extends FunSpec with Matchers {
         it("should work with valid values") {
           enum.values.foreach { entry =>
             val written = writeJs(entry)
-            readJs(written) shouldBe entry
+            read(written) shouldBe entry
           }
         }
 
         it("should fail with invalid values") {
           intercept[Exception] {
-            readJs(Js.Str("ababab"))
+            read(ujson.Str("ababab"))
           }
           intercept[Exception] {
-            readJs(Js.Num(Int.MaxValue))
+            read(ujson.Num(Int.MaxValue))
           }
         }
 
@@ -53,7 +52,7 @@ class UPicklerSpec extends FunSpec with Matchers {
         it("should write enum values to JS") {
           val valueTypeWriter = implicitly[Writer[ValueType]]
           enum.values.foreach { entry =>
-            writeJs(entry) shouldBe valueTypeWriter.write(entry.value)
+            writeJs(entry) shouldBe upickle.default.writeJs(entry.value)(valueTypeWriter)
           }
         }
 

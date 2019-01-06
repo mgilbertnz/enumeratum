@@ -1,6 +1,5 @@
 package enumeratum.values
 
-import enumeratum.EnrichedPartialFunction._
 import upickle.default.{Reader, Writer}
 
 /**
@@ -16,12 +15,7 @@ object UPickler {
   def reader[ValueType: Reader, EntryType <: ValueEnumEntry[ValueType]](
       enum: ValueEnum[ValueType, EntryType]
   ): Reader[EntryType] = {
-    val valueReader = implicitly[Reader[ValueType]]
-    Reader[EntryType] {
-      valueReader.read.andThenPartial {
-        case v if enum.withValueOpt(v).isDefined => enum.withValue(v)
-      }
-    }
+    upickle.default.reader[ValueType].map[EntryType](enum.withValue)
   }
 
   /**
@@ -30,10 +24,7 @@ object UPickler {
   def writer[ValueType: Writer, EntryType <: ValueEnumEntry[ValueType]](
       enum: ValueEnum[ValueType, EntryType]
   ): Writer[EntryType] = {
-    val valueWriter = implicitly[Writer[ValueType]]
-    Writer[EntryType] {
-      case member => valueWriter.write(member.value)
-    }
+    upickle.default.writer[ValueType].comap[EntryType](_.value)
   }
 
 }
